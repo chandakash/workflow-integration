@@ -1,0 +1,13 @@
+// event received => something is updated in ${sheet ID} -> check for sheet Id what are the triggers.
+// event received => decide what is the trigger (like triggerId) -> then decide which action to receive the event data.
+
+// actions API.
+
+// workflow Id 
+// document ID
+// sheet Id
+// user ID
+
+
+// a single trigger can have many actions.
+// many trigger can have many actions.

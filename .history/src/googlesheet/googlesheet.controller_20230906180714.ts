@@ -13,6 +13,11 @@ export class GooglesheetController {
 
   @Post("/create")
   async createSpreadSheet(@Body() createDto: any) {
+    // const authCode = await this.googleauthService.getAuthCode('akash'); // Retrieve the stored token
+    // console.log({authCode});
+    // if(!authCode){
+    //   throw new Error(`auth code is not available, sign in to auth url`);
+    // }
     const updatedJwtClient = await this.googleauthService.updateClientToken(createDto.userId, this._jwtClient);
     console.log({updatedJwtClient});
     return this.googlesheetService.createSpreadsheet(createDto.title, updatedJwtClient);
@@ -45,9 +50,8 @@ export class GooglesheetController {
   }
 
   @Post("/trigger")
-  async createTrigger(@Body() triggerDto: any){
-    const updatedJwtClient = await this.googleauthService.updateClientToken(triggerDto.userId, this._jwtClient);
-    return this.googlesheetService.createTrigger(triggerDto, updatedJwtClient);
+  createTrigger(@Body() triggerDto: any){
+    return this.googlesheetService.createTrigger(triggerDto);
   }
 
   @Post("/event")
@@ -60,4 +64,25 @@ export class GooglesheetController {
     await this.googlesheetService.googleEvent(eventData, updatedJwtClient);
     return "event is processed successfully";
   }
+
+
+  // @Get()
+  // findAll() {
+  //   return this.googlesheetService.findAll();
+  // }
+
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.googlesheetService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateGooglesheetDto: any) {
+  //   return this.googlesheetService.update(+id, updateGooglesheetDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.googlesheetService.remove(+id);
+  // }
 }

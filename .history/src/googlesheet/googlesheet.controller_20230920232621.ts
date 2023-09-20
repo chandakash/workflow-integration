@@ -45,9 +45,8 @@ export class GooglesheetController {
   }
 
   @Post("/trigger")
-  async createTrigger(@Body() triggerDto: any){
-    const updatedJwtClient = await this.googleauthService.updateClientToken(triggerDto.userId, this._jwtClient);
-    return this.googlesheetService.createTrigger(triggerDto, updatedJwtClient);
+  createTrigger(@Body() triggerDto: any){
+    return this.googlesheetService.createTrigger(triggerDto);
   }
 
   @Post("/event")

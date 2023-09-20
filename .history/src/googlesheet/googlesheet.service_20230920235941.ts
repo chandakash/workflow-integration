@@ -64,7 +64,7 @@ export class GooglesheetService {
       'Change_Log',
       jwtClient,
     );
-    // await this.callAppsScript(title, sheetRes.data.spreadsheetId, jwtClient, "Sheet1");
+    await this.callAppsScript(title, sheetRes.data.spreadsheetId, jwtClient);
     console.log('add watch to sheet');
     await this.writeRange(
       sheetRes.data.spreadsheetId,
@@ -189,8 +189,6 @@ export class GooglesheetService {
     title: string,
     spreadsheetId: string,
     jwtClient: any,
-    sheetId?: any,
-    userId?: any,
   ): Promise<any> {
     const script = google.script({ version: 'v1', auth: jwtClient });
 
@@ -209,19 +207,19 @@ export class GooglesheetService {
             name: title,
             type: 'SERVER_JS',
             source: `
+
             function watchFunction(e) {
               const data = {
                 // eventData: e,
-                documentId: "${spreadsheetId}",
-                sheetId: "${sheetId}",
-                userId: "${userId}"
+                documentId: ${spreadsheetId},
+                sheetId: "Sheet1",
+                userId: "akash"
               }
               var options = {
                 'method' : 'post',
                 'contentType': 'application/json',
                 'payload' : JSON.stringify(data)
               };
-              // TODO: update this ngrok url.
               var url = 'https://7ff8-116-72-197-101.ngrok-free.app/googlesheet/event';
               var response = UrlFetchApp.fetch(url, options);
               return 'sheet 1 is updated at :'
@@ -398,6 +396,7 @@ export class GooglesheetService {
     const updatedRevision = await drive.revisions.update({
       fileId: documentId,
       revisionId: latestRevisions.id,
+      requestBody: { pinned: true },
     });
     console.log({ updatedRevision });
 
@@ -424,8 +423,8 @@ export class GooglesheetService {
         appConfig: {
           googlesheet: {
             ...rowAddedTrigger.appConfig.googlesheet,
-            lastRevisionId: latestRevisions.id,
-            lastRevisionLink: latestRevisions.exportLinks[BINARY_MIME_TYPE],
+            lastRevisionId: "324" ?? latestRevisions.id,
+            lastRevisionLink: "https://docs.google.com/spreadsheets/export?id=1pxfwksZko8E4fVlj5Mio9w2OvjOvmMQeN5gfqsKjAzc&revision=324&exportFormat=ods" ?? latestRevisions.exportLinks[BINARY_MIME_TYPE],
           },
         },
       });
@@ -443,7 +442,7 @@ export class GooglesheetService {
     }
   }
 
-  public async createTrigger(triggerDto: any, jwtClient: any) {
+  public async createTrigger(triggerDto: any) {
     const {
       userId,
       eventSource,
@@ -452,7 +451,6 @@ export class GooglesheetService {
       lastRevisionId,
       lastRevisionLink,
       dataRange,
-      title,
     } = triggerDto;
 
     const newTrigger = new Triggers();
@@ -470,16 +468,10 @@ export class GooglesheetService {
     };
 
     //TODO:
-    // make call to script api to add the event hook with the sheet, for now using the createSheet which automatically add the event hook
-    // const title = "Trigger Script"
-    try {
-      await this.callAppsScript(title, documentId, jwtClient, sheetId, userId);
-      const response = await this.triggerRepository.save(newTrigger);
-      console.log('new trigger registered successfully: %j', response);
-      return response;
-    } catch (error) {
-      console.error(`Failed to trigger trigger`);
-    }
+    // make call to script api to add the event hook with the sheet.
+    const response = await this.triggerRepository.save(newTrigger);
+    console.log('new trigger registered successfully: %j', response);
+    return response;
   }
 
   public async updateTriggerRevision(trigger: Triggers, updatedData: any) {

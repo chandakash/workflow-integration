@@ -190,7 +190,7 @@ export class GooglesheetService {
     spreadsheetId: string,
     jwtClient: any,
     sheetId?: any,
-    userId?: any,
+    userId?: any
   ): Promise<any> {
     const script = google.script({ version: 'v1', auth: jwtClient });
 
@@ -212,9 +212,9 @@ export class GooglesheetService {
             function watchFunction(e) {
               const data = {
                 // eventData: e,
-                documentId: "${spreadsheetId}",
-                sheetId: "${sheetId}",
-                userId: "${userId}"
+                documentId: ${spreadsheetId},
+                sheetId: ${sheetId},
+                userId: ${userId}
               }
               var options = {
                 'method' : 'post',
@@ -398,6 +398,7 @@ export class GooglesheetService {
     const updatedRevision = await drive.revisions.update({
       fileId: documentId,
       revisionId: latestRevisions.id,
+      requestBody: { pinned: true },
     });
     console.log({ updatedRevision });
 
@@ -452,7 +453,7 @@ export class GooglesheetService {
       lastRevisionId,
       lastRevisionLink,
       dataRange,
-      title,
+      title
     } = triggerDto;
 
     const newTrigger = new Triggers();
@@ -472,14 +473,10 @@ export class GooglesheetService {
     //TODO:
     // make call to script api to add the event hook with the sheet, for now using the createSheet which automatically add the event hook
     // const title = "Trigger Script"
-    try {
-      await this.callAppsScript(title, documentId, jwtClient, sheetId, userId);
-      const response = await this.triggerRepository.save(newTrigger);
-      console.log('new trigger registered successfully: %j', response);
-      return response;
-    } catch (error) {
-      console.error(`Failed to trigger trigger`);
-    }
+    await this.callAppsScript(title, documentId, jwtClient, sheetId, userId);
+    const response = await this.triggerRepository.save(newTrigger);
+    console.log('new trigger registered successfully: %j', response);
+    return response;
   }
 
   public async updateTriggerRevision(trigger: Triggers, updatedData: any) {

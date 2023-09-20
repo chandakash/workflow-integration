@@ -190,7 +190,7 @@ export class GooglesheetService {
     spreadsheetId: string,
     jwtClient: any,
     sheetId?: any,
-    userId?: any,
+    userId?: any
   ): Promise<any> {
     const script = google.script({ version: 'v1', auth: jwtClient });
 
@@ -397,7 +397,7 @@ export class GooglesheetService {
     // save the latest revision. for more than 30 days.
     const updatedRevision = await drive.revisions.update({
       fileId: documentId,
-      revisionId: latestRevisions.id,
+      revisionId: latestRevisions.id, 
     });
     console.log({ updatedRevision });
 
@@ -452,7 +452,7 @@ export class GooglesheetService {
       lastRevisionId,
       lastRevisionLink,
       dataRange,
-      title,
+      title
     } = triggerDto;
 
     const newTrigger = new Triggers();
@@ -474,12 +474,13 @@ export class GooglesheetService {
     // const title = "Trigger Script"
     try {
       await this.callAppsScript(title, documentId, jwtClient, sheetId, userId);
-      const response = await this.triggerRepository.save(newTrigger);
-      console.log('new trigger registered successfully: %j', response);
-      return response;
+    const response = await this.triggerRepository.save(newTrigger);
+    console.log('new trigger registered successfully: %j', response);
+    return response;
     } catch (error) {
-      console.error(`Failed to trigger trigger`);
+      console.error(`Failed to trigger trigger`)
     }
+    
   }
 
   public async updateTriggerRevision(trigger: Triggers, updatedData: any) {
